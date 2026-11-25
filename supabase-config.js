@@ -1,4 +1,5 @@
+// Projeto: farmacia1.0 (thwtapkvhqfmvfozsbty)
 const SUPABASE_URL = 'https://thwtapkvhqfmvfozsbty.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjeHJhYnBleWx6eGNmYWlqZHN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyMTg3MzMsImV4cCI6MjEwMzc5NDczM30.5lDmPYN1OhmQa_GnrIetsR_aDI7p3oWqKSUP3_zyS58';
+const SUPABASE_ANON_KEY = 'sb_publishable_Qn0ckCVIQeEpz7vXDKftNw_diAMSvsn'; // publishable key
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);

@@ -84,7 +84,20 @@ document.getElementById('registo-form').addEventListener('submit', async (e) => 
   });
 
   if(error){
-    errEl.textContent = error.message.includes('already') ? 'Já existe uma conta com este e-mail.' : 'Não foi possível criar a conta.';
+    console.error(error);
+    const m = (error.message || '').toLowerCase();
+    errEl.textContent =
+      m.includes('already') ? 'Já existe uma conta com este e-mail.' :
+      m.includes('database error') ? 'Erro na base de dados (falta correr o schema SQL?).' :
+      m.includes('rate limit') ? 'Muitas tentativas. Tenta daqui a alguns minutos.' :
+      'Erro: ' + error.message;
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Criar conta';
+    return;
+  }
+  // Com confirmação de e-mail ligada, o Supabase não dá erro para e-mails repetidos
+  if(data.user && data.user.identities && data.user.identities.length === 0){
+    errEl.textContent = 'Já existe uma conta com este e-mail.';
     errEl.style.display = 'block';
     btn.disabled = false; btn.textContent = 'Criar conta';
     return;
