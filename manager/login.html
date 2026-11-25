@@ -59,7 +59,7 @@ document.getElementById('admin-login-form').addEventListener('submit', async (e)
 
   const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if(error){
-    errEl.textContent = 'E-mail ou senha incorretos.';
+    errEl.textContent = (error.message||'').toLowerCase().includes('not confirmed') ? 'Confirma primeiro o teu e-mail (vê a caixa de entrada e o spam).' : 'E-mail ou senha incorretos.';
     errEl.style.display = 'block';
     btn.disabled = false; btn.textContent = 'Entrar';
     return;
