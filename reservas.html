@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marcar serviço — Farmácia Vida</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="loading-pill-wrap">
+    <img src="assets/loading-pill.svg" alt="A carregar…">
+  </div>
+  <p>A carregar…</p>
+</div>
+
+<div id="topbar-mount"></div>
+
+<main class="wrap-sm" style="padding:2.5rem 0 3rem;">
+  <p class="section-eyebrow">MARCAÇÕES</p>
+  <h1 class="font-display" style="font-size:1.8rem;margin-bottom:.8rem;">Marque o seu atendimento</h1>
+  <p style="color:rgba(241,231,218,0.65);margin-bottom:1.5rem;">
+    Marque com antecedência o serviço de que precisa na nossa farmácia: consulta farmacêutica, medição de tensão arterial ou glicemia, vacinação e muito mais. Sem filas e com atendimento personalizado.
+  </p>
+
+  <div class="product-img burn-edge" style="height:180px;margin-bottom:1.5rem;">[ Imagem da farmácia — placeholder ]</div>
+
+  <div id="reserva-content"></div>
+
+  <div class="location-section js-localizacao-secao reveal" style="display:none;margin-top:2.5rem;">
+    <div class="location-card">
+      <p class="section-eyebrow">ONDE FICAMOS</p>
+      <h2 class="section-title" style="margin-bottom:.3rem;">Encontre-nos</h2>
+      <div class="row">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <p class="js-contacto-morada">A carregar morada…</p>
+      </div>
+      <a href="#" target="_blank" rel="noopener" class="btn-outline js-mapa-link" style="align-self:flex-start;">Ver no Google Maps</a>
+    </div>
+    <iframe class="location-map js-mapa-embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Localização no mapa"></iframe>
+  </div>
+</main>
+
+<div id="bottom-nav-mount"></div>
+
+<script src="assets/supabase-config.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/cart.js"></script>
+<script src="assets/layout.js"></script>
+<script>
+renderTopbar('reservas');
+renderBottomNav('reservas');
+
+async function init(){
+  const auth = await requireLogin('login.html?next=reservas.html', 'Inicia sessão para marcares um serviço');
+  if(!auth) return;
+  const perfil = auth.profile;
+
+  document.getElementById('reserva-content').innerHTML = `
+    <form id="reserva-form" class="admin-card">
+      <div class="field"><label>Nome completo *</label><input id="r-nome" type="text" required placeholder="O seu nome" value="${perfil.nome || ''}"></div>
+      <div style="display:flex;gap:1rem;">
+        <div class="field" style="flex:1;"><label>Número de telefone *</label><input id="r-telefone" type="tel" required placeholder="9XX XXX XXX" value="${perfil.telefone || ''}"></div>
+        <div class="field" style="flex:1;"><label>E-mail (opcional)</label><input id="r-email" type="email" placeholder="seuemail@exemplo.com" value="${auth.session.user.email}"></div>
+      </div>
+      <div style="display:flex;gap:1rem;">
+        <div class="field" style="flex:1;"><label>Data da marcação *</label><input id="r-data" type="date" required></div>
+        <div class="field" style="flex:1;"><label>Hora da marcação *</label><input id="r-hora" type="time" required></div>
+      </div>
+      <div style="display:flex;gap:1rem;">
+        <div class="field" style="flex:1;"><label>Número de pessoas *</label><input id="r-pessoas" type="number" min="1" placeholder="Ex: 4" value="2" required></div>
+        <div class="field" style="flex:1;">
+          <label>Serviço *</label>
+          <select id="r-tipo" required>
+            <option value="">Selecione</option>
+            <option>Consulta farmacêutica</option>
+            <option>Medição de tensão arterial</option>
+            <option>Medição de glicemia</option>
+            <option>Vacinação</option>
+            <option>Teste rápido</option>
+            <option>Outro serviço</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Observações (opcional)</label><textarea id="r-obs" rows="3" placeholder="Alguma informação que devamos saber?"></textarea></div>
+
+      <label style="display:flex;align-items:flex-start;gap:.6rem;font-size:.82rem;color:rgba(241,231,218,0.65);margin-bottom:1.2rem;">
+        <input id="r-termos" type="checkbox" required style="width:auto;margin-top:.2rem;">
+        Li e aceito a política de cancelamento, a tolerância de atraso de 15 minutos e confirmo que os dados fornecidos são verdadeiros. *
+      </label>
+
+      <p id="reserva-error" class="error-msg" style="display:none;"></p>
+      <button type="submit" class="btn-orange block" id="reserva-btn">Marcar serviço</button>
+    </form>
+  `;
+
+  document.getElementById('reserva-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('reserva-btn');
+    btn.disabled = true; btn.textContent = 'A enviar…';
+
+    const reserva = {
+      cliente_id: auth.session.user.id,
+      nome: document.getElementById('r-nome').value.trim(),
+      telefone: document.getElementById('r-telefone').value.trim(),
+      email: document.getElementById('r-email').value.trim(),
+      data_reserva: document.getElementById('r-data').value,
+      hora_reserva: document.getElementById('r-hora').value,
+      pessoas: Number(document.getElementById('r-pessoas').value),
+      tipo_mesa: document.getElementById('r-tipo').value,
+      observacoes: document.getElementById('r-obs').value.trim()
+    };
+
+    const { error } = await supabaseClient.from('reservations').insert(reserva);
+
+    if(error){
+      document.getElementById('reserva-error').textContent = 'Não foi possível enviar a marcação.';
+      document.getElementById('reserva-error').style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Marcar serviço';
+      return;
+    }
+
+    // A reserva já ficou gravada — abre o WhatsApp com o resumo, para o
+    // farmácia confirmar contigo diretamente.
+    const mensagem =
+      `Olá! Gostaria de marcar um serviço na Farmácia Vida:\n\n` +
+      `Nome: ${reserva.nome}\nTelefone: ${reserva.telefone}\n` +
+      (reserva.email ? `E-mail: ${reserva.email}\n` : '') +
+      `Data: ${reserva.data_reserva}\nHora: ${reserva.hora_reserva}\n` +
+      `Pessoas: ${reserva.pessoas}\nServiço: ${reserva.tipo_mesa}\n` +
+      (reserva.observacoes ? `Observações: ${reserva.observacoes}\n` : '');
+    sendWhatsAppMessage(mensagem);
+
+    document.getElementById('reserva-content').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">✅</div>
+        <h3 class="font-display" style="font-size:1.3rem;margin-bottom:.5rem;">Marcação enviada!</h3>
+        <p>Vamos confirmar contigo brevemente. Se o WhatsApp não abriu sozinho, toca no botão flutuante para falares connosco.</p>
+      </div>`;
+  });
+}
+init();
+</script>
+</body>
+</html>

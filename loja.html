@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produtos — Farmácia Vida</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="loading-pill-wrap">
+    <img src="assets/loading-pill.svg" alt="A carregar…">
+  </div>
+  <p>A carregar…</p>
+</div>
+
+<!-- Som de "dois blocos de madeira a chocar", usado pelos carrosséis (ver assets/carousel.js) -->
+<audio id="wood-sound" preload="auto">
+  <source src="assets/sounds/wood-click.mp3" type="audio/mpeg">
+</audio>
+
+<div id="topbar-mount"></div>
+
+<main class="wrap" style="padding:2.5rem 0 3rem;">
+
+  <div class="carousel-wrap reveal">
+    <p class="section-eyebrow" data-i18n="medEyebrow">MEDICAMENTOS</p>
+    <h2 class="section-title" data-i18n="medTitle">Venda livre e com receita</h2>
+    <button class="carousel-arrow left" onclick="scrollCarousel('medicamentos-track',-260)" aria-label="Deslizar para a esquerda">‹</button>
+    <button class="carousel-arrow right" onclick="scrollCarousel('medicamentos-track',260)" aria-label="Deslizar para a direita">›</button>
+    <div id="medicamentos-track" class="carousel-track">
+      <div class="carousel-skeleton"></div><div class="carousel-skeleton"></div><div class="carousel-skeleton"></div>
+    </div>
+  </div>
+
+  <div class="carousel-wrap reveal">
+    <p class="section-eyebrow" data-i18n="higEyebrow">HIGIENE</p>
+    <h2 class="section-title" data-i18n="higTitle">Cuidado pessoal</h2>
+    <button class="carousel-arrow left" onclick="scrollCarousel('higiene-track',-260)" aria-label="Deslizar para a esquerda">‹</button>
+    <button class="carousel-arrow right" onclick="scrollCarousel('higiene-track',260)" aria-label="Deslizar para a direita">›</button>
+    <div id="higiene-track" class="carousel-track">
+      <div class="carousel-skeleton"></div><div class="carousel-skeleton"></div><div class="carousel-skeleton"></div>
+    </div>
+  </div>
+
+  <div class="carousel-wrap reveal">
+    <p class="section-eyebrow" data-i18n="vitEyebrow">VITAMINAS</p>
+    <h2 class="section-title" data-i18n="vitTitle">Vitaminas e suplementos</h2>
+    <button class="carousel-arrow left" onclick="scrollCarousel('vitaminas-track',-260)" aria-label="Deslizar para a esquerda">‹</button>
+    <button class="carousel-arrow right" onclick="scrollCarousel('vitaminas-track',260)" aria-label="Deslizar para a direita">›</button>
+    <div id="vitaminas-track" class="carousel-track">
+      <div class="carousel-skeleton"></div><div class="carousel-skeleton"></div><div class="carousel-skeleton"></div>
+    </div>
+  </div>
+  <p class="age-notice" data-i18n="rxNotice">💊 Medicamentos com receita só são dispensados mediante receita médica válida.</p>
+
+</main>
+
+<div id="bottom-nav-mount"></div>
+
+<script src="assets/supabase-config.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/cart.js"></script>
+<script src="assets/layout.js"></script>
+<script src="assets/carousel.js"></script>
+<script>
+renderTopbar('loja');
+renderBottomNav('loja');
+bindCarouselSound();
+
+const DESTAQUE = false;
+async function carregar(){
+  const { data, error } = await supabaseClient.from('products').select('*').eq('ativo', true).order('ordem', { ascending:true }).order('nome');
+  if(error || !data){ return; }
+
+  const cats = ['medicamentos','higiene','vitaminas'];
+  cats.forEach((cat, ci) => {
+    const lista = data.filter(p => p.categoria === cat);
+    const box = document.getElementById(cat + '-track');
+    if(!box) return;
+    box.innerHTML = lista.map((p,i) => `
+    <a href="produto.html?id=${p.id}" class="food-card burn-edge card-hover ${p.requer_receita ? 'receita' : ''}">
+      ${(DESTAQUE && ci===0 && i===0) ? `<span class="badge-tag">${''}</span>` : ''}
+      <div class="product-img" style="${p.imagem_url?`background-image:url(${p.imagem_url})`:''}">${p.imagem_url?'':`[ ${'Foto'} — ${p.nome} ]`}</div>
+      <div class="info">
+        ${p.requer_receita ? `<span class="receita-badge">${'💊 Receita'}</span>` : ''}
+        <h4>${p.nome}</h4>
+        <p class="desc">${p.descricao || ''}</p>
+        <div class="row">
+          <span class="price">${formatKz(p.preco_promocional || p.preco)}</span>
+          <button class="add-round" onclick="event.preventDefault(); window.location.href='produto.html?id=${p.id}'" aria-label="Adicionar">+</button>
+        </div>
+      </div>
+    </a>
+  `).join('') || `<p class="empty-state">${'Sem produtos nesta categoria.'}</p>`;
+  });
+}
+carregar();
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){ entry.target.classList.add('in-view'); revealObserver.unobserve(entry.target); }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+</script>
+</body>
+</html>

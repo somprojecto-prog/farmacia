@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farmácia Vida</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/i18n.js"></script>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="loading-pill-wrap">
+    <img src="assets/loading-pill.svg" alt="A carregar…">
+  </div>
+  <p data-i18n="loading">A carregar…</p>
+</div>
+
+<!-- Som de "dois blocos de madeira a chocar", usado pelos carrosséis (ver assets/carousel.js) -->
+<audio id="wood-sound" preload="auto">
+  <source src="assets/sounds/wood-click.mp3" type="audio/mpeg">
+</audio>
+
+<div id="topbar-mount"></div>
+
+<header class="wood-texture hero-section">
+  <div class="wrap hero-grid">
+    <div class="hero-text reveal">
+      <p class="hero-tag" data-i18n="heroTag">A sua saúde em primeiro lugar 💚</p>
+      <h1 class="hero-title js-hero-title">Farmácia<br><span>Vida</span></h1>
+      <p class="js-hero-descricao" data-i18n="heroDesc" style="color:rgba(241,231,218,0.75);font-size:1.05rem;margin-bottom:2rem;">Encomende online medicamentos, higiene e vitaminas e receba em casa, ou marque um serviço na farmácia.</p>
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap;">
+        <a href="loja.html" class="btn-orange btn-pulse"><span data-i18n="viewMenu">Ver produtos</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="reservas.html" class="btn-outline"><span data-i18n="reserve">Marcar serviço</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="hero-photo reveal js-hero-photo">
+      <div class="hero-badge" data-i18n-html="badge">
+        <span>100%</span>
+        Produtos<br>certificados
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="feature-bar">
+    <div class="feature-marquee">
+      <div class="feature-track">
+        <div class="feature-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--orange-light)" stroke-width="1.8"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z"/></svg>
+          <div><h5 data-i18n="f1t">Aconselhamento farmacêutico</h5><p data-i18n="f1d">Profissionais sempre disponíveis</p></div>
+        </div>
+        <div class="feature-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--orange-light)" stroke-width="1.8"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7zM5 19.5h.01M17 19.5h.01"/></svg>
+          <div><h5 data-i18n="f2t">Entrega rápida</h5><p data-i18n="f2d">Em sua casa num instante</p></div>
+        </div>
+        <div class="feature-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--orange-light)" stroke-width="1.8"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>
+          <div><h5 data-i18n="f3t">Produtos certificados</h5><p data-i18n="f3d">Qualidade garantida todos os dias</p></div>
+        </div>
+        <div class="feature-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--orange-light)" stroke-width="1.8"><path d="M12 21s-7.5-4.6-10-9.3C.4 8 2.3 4 6.3 4c2 0 3.6 1.2 5.7 3.6C14.1 5.2 15.7 4 17.7 4c4 0 5.9 4 4.3 7.7-2.5 4.7-10 9.3-10 9.3z"/></svg>
+          <div><h5 data-i18n="f4t">Cuidamos de si</h5><p data-i18n="f4d">A sua saúde em primeiro lugar</p></div>
+        </div>
+      </div>
+      <div class="feature-track" aria-hidden="true">
+        <div class="feature-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--orange-light)" stroke-width="1.8"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z"/></svg>
+          <div><h5 data-i18n="f1t">Aconselhamento farmacêutico</h5><p data-i18n="f1d">Profissionais sempre disponíveis</p></div>
+        </div>
+        <div class="feature-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--orange-light)" stroke-width="1.8"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7zM5 19.5h.01M17 19.5h.01"/></svg>
+          <div><h5 data-i18n="f2t">Entrega rápida</h5><p data-i18n="f2d">Em sua casa num instante</p></div>
+        </div>
+        <div class="feature-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--orange-light)" stroke-width="1.8"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>
+          <div><h5 data-i18n="f3t">Produtos certificados</h5><p data-i18n="f3d">Qualidade garantida todos os dias</p></div>
+        </div>
+        <div class="feature-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--orange-light)" stroke-width="1.8"><path d="M12 21s-7.5-4.6-10-9.3C.4 8 2.3 4 6.3 4c2 0 3.6 1.2 5.7 3.6C14.1 5.2 15.7 4 17.7 4c4 0 5.9 4 4.3 7.7-2.5 4.7-10 9.3-10 9.3z"/></svg>
+          <div><h5 data-i18n="f4t">Cuidamos de si</h5><p data-i18n="f4d">A sua saúde em primeiro lugar</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" style="padding:2.5rem 0;">
+
+  <div class="carousel-wrap reveal">
+    <div class="section-head">
+      <div>
+        <p class="section-eyebrow" data-i18n="medEyebrow">MEDICAMENTOS</p>
+        <h2 class="section-title" data-i18n="medTitle">Venda livre e com receita</h2>
+      </div>
+      <a href="loja.html" class="ver-tudo"><span data-i18n="seeAll">Ver tudo</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <button class="carousel-arrow left" onclick="scrollCarousel('medicamentos-track',-260)" aria-label="Deslizar para a esquerda">‹</button>
+    <button class="carousel-arrow right" onclick="scrollCarousel('medicamentos-track',260)" aria-label="Deslizar para a direita">›</button>
+    <div id="medicamentos-track" class="carousel-track">
+      <div class="carousel-skeleton"></div><div class="carousel-skeleton"></div><div class="carousel-skeleton"></div>
+    </div>
+  </div>
+
+  <div class="carousel-wrap reveal">
+    <div class="section-head">
+      <div>
+        <p class="section-eyebrow" data-i18n="higEyebrow">HIGIENE</p>
+        <h2 class="section-title" data-i18n="higTitle">Cuidado pessoal</h2>
+      </div>
+      <a href="loja.html" class="ver-tudo"><span data-i18n="seeAll">Ver tudo</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <button class="carousel-arrow left" onclick="scrollCarousel('higiene-track',-260)" aria-label="Deslizar para a esquerda">‹</button>
+    <button class="carousel-arrow right" onclick="scrollCarousel('higiene-track',260)" aria-label="Deslizar para a direita">›</button>
+    <div id="higiene-track" class="carousel-track">
+      <div class="carousel-skeleton"></div><div class="carousel-skeleton"></div><div class="carousel-skeleton"></div>
+    </div>
+  </div>
+
+  <div class="carousel-wrap reveal">
+    <div class="section-head">
+      <div>
+        <p class="section-eyebrow" data-i18n="vitEyebrow">VITAMINAS</p>
+        <h2 class="section-title" data-i18n="vitTitle">Vitaminas e suplementos</h2>
+      </div>
+      <a href="loja.html" class="ver-tudo"><span data-i18n="seeAll">Ver tudo</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <button class="carousel-arrow left" onclick="scrollCarousel('vitaminas-track',-260)" aria-label="Deslizar para a esquerda">‹</button>
+    <button class="carousel-arrow right" onclick="scrollCarousel('vitaminas-track',260)" aria-label="Deslizar para a direita">›</button>
+    <div id="vitaminas-track" class="carousel-track">
+      <div class="carousel-skeleton"></div><div class="carousel-skeleton"></div><div class="carousel-skeleton"></div>
+    </div>
+  </div>
+  <p class="age-notice" data-i18n="rxNotice">💊 Medicamentos com receita só são dispensados mediante receita médica válida.</p>
+
+  <div class="location-section js-localizacao-secao reveal" style="display:none;">
+    <div class="location-card">
+      <p class="section-eyebrow" data-i18n="whereEyebrow">ONDE ESTAMOS</p>
+      <h2 class="section-title" style="margin-bottom:.3rem;" data-i18n="whereTitle">Visite-nos</h2>
+      <div class="row">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <p class="js-contacto-morada" data-i18n="addrLoading">A carregar morada…</p>
+      </div>
+      <a href="#" target="_blank" rel="noopener" class="btn-outline js-mapa-link" style="align-self:flex-start;" data-i18n="viewMap">Ver no Google Maps</a>
+    </div>
+    <iframe class="location-map js-mapa-embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Localização no mapa"></iframe>
+  </div>
+
+  <section class="gmaps-gallery reveal" id="gmaps-gallery" style="display:none;">
+    <div class="section-head">
+      <div>
+        <p class="section-eyebrow" data-i18n="galEyebrow">FOTOS DO LOCAL</p>
+        <h2 class="section-title" id="gal-nome"></h2>
+      </div>
+      <a href="#" target="_blank" rel="noopener" class="ver-tudo" id="gal-link"><span data-i18n="galAll">Ver no Google Maps</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="gal-square">
+      <div class="gal-track" id="gal-track"></div>
+      <span class="gal-count" id="gal-count"></span>
+      <p class="gal-credit" id="gal-credit"></p>
+    </div>
+    <div class="carousel-dots" id="gal-dots"></div>
+  </section>
+
+</main>
+
+<footer class="charcoal-texture" style="padding:2.5rem 0;border-top:1px solid rgba(241,231,218,0.08);">
+  <div class="wrap" style="text-align:center;">
+    <p style="font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(241,231,218,0.45);margin-bottom:.9rem;" data-i18n="social">Redes sociais</p>
+    <div class="social-row">
+      <a href="https://instagram.com/" target="_blank" rel="noopener" aria-label="Instagram" class="social-icon js-social-instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+      </a>
+      <a href="https://facebook.com/" target="_blank" rel="noopener" aria-label="Facebook" class="social-icon js-social-facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </a>
+      <a href="https://wa.me/244928797993" target="_blank" rel="noopener" aria-label="WhatsApp" class="social-icon js-social-whatsapp">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-10 4.5-10 10 0 1.77.46 3.45 1.32 4.94L2 22l5.2-1.36A9.94 9.94 0 0 0 12.04 22c5.5 0 10-4.5 10-10s-4.5-10-10-10zm0 18.14c-1.6 0-3.16-.43-4.5-1.24l-.32-.19-3.08.81.82-3-.21-.33a8.15 8.15 0 0 1-1.25-4.35c0-4.51 3.67-8.18 8.18-8.18s8.18 3.67 8.18 8.18-3.67 8.3-8.18 8.3zm4.5-6.1c-.25-.12-1.45-.72-1.67-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.77.97-.14.16-.28.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.22-1.45-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.28.37-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.42-.55-.42h-.47c-.16 0-.42.06-.64.3-.22.25-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.47-.28z"/></svg>
+      </a>
+    </div>
+    <p id="footer-copy" style="font-size:.85rem;color:rgba(241,231,218,0.5);margin-top:1.5rem;">
+      © <span id="ano"></span> Farmácia Vida — <span data-i18n="rights">Todos os direitos reservados.</span>
+    </p>
+  </div>
+</footer>
+
+<a href="https://wa.me/244928797993" target="_blank" rel="noopener" class="whatsapp-float js-whatsapp-float" aria-label="Fala connosco no WhatsApp">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2c-5.5 0-10 4.5-10 10 0 1.77.46 3.45 1.32 4.94L2 22l5.2-1.36A9.94 9.94 0 0 0 12.04 22c5.5 0 10-4.5 10-10s-4.5-10-10-10zm0 18.14c-1.6 0-3.16-.43-4.5-1.24l-.32-.19-3.08.81.82-3-.21-.33a8.15 8.15 0 0 1-1.25-4.35c0-4.51 3.67-8.18 8.18-8.18s8.18 3.67 8.18 8.18-3.67 8.3-8.18 8.3zm4.5-6.1c-.25-.12-1.45-.72-1.67-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.77.97-.14.16-.28.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.22-1.45-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.28.37-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.42-.55-.42h-.47c-.16 0-.42.06-.64.3-.22.25-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.47-.28z"/></svg>
+</a>
+
+<div id="bottom-nav-mount"></div>
+
+<script src="assets/supabase-config.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/cart.js"></script>
+<script src="assets/layout.js"></script>
+<script src="assets/carousel.js"></script>
+<script>
+// Mostra logo a foto do hero guardada da última visita (evita ver a imagem antiga ao atualizar)
+try{ const f = localStorage.getItem('hero_foto_url'); if(f) document.querySelector('.js-hero-photo').style.backgroundImage = `url("${f}")`; }catch(e){}
+document.getElementById('ano').textContent = new Date().getFullYear();
+renderTopbar('home');
+renderBottomNav('home');
+bindCarouselSound();
+
+const DESTAQUE = true;
+async function carregarDestaques(){
+  const { data, error } = await supabaseClient
+    .from('products')
+    .select('*')
+    .eq('ativo', true)
+    .order('ordem', { ascending:true }).order('nome');
+
+  if(error || !data){
+    const m = document.getElementById('medicamentos-track');
+    if(m) m.innerHTML = `<p class="empty-state">${t('loadErr')}</p>`;
+    return;
+  }
+
+  const cats = ['medicamentos','higiene','vitaminas'];
+  cats.forEach((cat, ci) => {
+    const lista = data.filter(p => p.categoria === cat);
+    const box = document.getElementById(cat + '-track');
+    if(!box) return;
+    box.innerHTML = lista.map((p,i) => `
+    <a href="produto.html?id=${p.id}" class="food-card burn-edge card-hover ${p.requer_receita ? 'receita' : ''}">
+      ${(DESTAQUE && ci===0 && i===0) ? `<span class="badge-tag">${t('topSeller')}</span>` : ''}
+      <div class="product-img" style="${p.imagem_url?`background-image:url(${p.imagem_url})`:''}">${p.imagem_url?'':`[ ${t('photo')} — ${p.nome} ]`}</div>
+      <div class="info">
+        ${p.requer_receita ? `<span class="receita-badge">${t('rxBadge')}</span>` : ''}
+        <h4>${p.nome}</h4>
+        <p class="desc">${p.descricao || ''}</p>
+        <div class="row">
+          <span class="price">${formatKz(p.preco_promocional || p.preco)}</span>
+          <button class="add-round" onclick="event.preventDefault(); window.location.href='produto.html?id=${p.id}'" aria-label="Adicionar">+</button>
+        </div>
+      </div>
+    </a>
+  `).join('') || `<p class="empty-state">${t('noProducts')}</p>`;
+  });
+}
+carregarDestaques();
+
+// Anima os blocos suavemente quando entram no ecrã (sem exageros)
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('in-view');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ===== Galeria de fotos do Google Maps (Places API) =====
+// Chamada pelo common.js quando as configurações do site carregam.
+function aoCarregarConfiguracoes(cfg){ carregarGaleriaMaps(cfg); }
+
+function falhaGaleria(msg){
+  console.warn('Galeria Google Maps:', msg);
+  if(!/[?&]debug/.test(location.search)) return;
+  const d = document.createElement('div');
+  d.style.cssText = 'margin:1rem;padding:.8rem 1rem;border:1px solid #c0392b;border-radius:12px;color:#f1e7da;font-size:.8rem;word-break:break-word;';
+  d.textContent = 'Galeria Google Maps: ' + msg;
+  const alvo = document.getElementById('gmaps-gallery');
+  alvo.parentNode.insertBefore(d, alvo);
+}
+
+async function erroPlaces(r){
+  let m = '';
+  try{ const j = await r.json(); m = (j.error && j.error.message) || ''; }catch(e){}
+  return 'Google respondeu ' + r.status + (m ? ' — ' + m : '');
+}
+
+async function carregarGaleriaMaps(cfg){
+  const key = (cfg.google_api_key || '').trim();
+  const pid = (cfg.google_place_id || '').trim().replace(/^places\//,'');
+  const morada = (cfg.contacto_morada || '').trim();
+  if(!key){ falhaGaleria('falta a chave da API (campo no manager vazio ou não guardado).'); return; }
+  if(!pid && !morada){ falhaGaleria('falta a morada ou o Place ID.'); return; }
+
+  const chaveCache = 'gal_' + (pid || morada);
+  let info = null;
+  try{
+    const c = JSON.parse(localStorage.getItem(chaveCache) || 'null');
+    if(c && Date.now() - c.t < 24*3600*1000) info = c.info;
+  }catch(e){}
+
+  try{
+    if(!info){
+      let place;
+      if(pid){
+        const r = await fetch('https://places.googleapis.com/v1/places/' + encodeURIComponent(pid), {
+          headers:{ 'X-Goog-Api-Key': key, 'X-Goog-FieldMask': 'displayName,googleMapsUri,photos' }
+        });
+        if(!r.ok){ falhaGaleria(await erroPlaces(r)); return; }
+        place = await r.json();
+      } else {
+        const r = await fetch('https://places.googleapis.com/v1/places:searchText', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json', 'X-Goog-Api-Key': key,
+                    'X-Goog-FieldMask': 'places.displayName,places.googleMapsUri,places.photos' },
+          body: JSON.stringify({ textQuery: ((cfg.nome_site || '') + ' ' + morada).trim(), maxResultCount: 5 })
+        });
+        if(!r.ok){ falhaGaleria(await erroPlaces(r)); return; }
+        const lista = (await r.json()).places || [];
+        place = lista.find(x => x.photos && x.photos.length) || lista[0];
+      }
+      if(!place || !place.photos || !place.photos.length){ falhaGaleria('o Google encontrou o local' + (place && place.displayName ? ' "' + place.displayName.text + '"' : '') + ' mas sem fotos. Põe o nome do restaurante na morada ou usa o Place ID.'); return; }
+      info = {
+        nome: place.displayName && place.displayName.text || '',
+        uri: place.googleMapsUri || '',
+        fotos: place.photos.map(f => ({
+          name: f.name,
+          autor: (f.authorAttributions && f.authorAttributions[0]) ? { n: f.authorAttributions[0].displayName || '', u: f.authorAttributions[0].uri || '' } : null
+        }))
+      };
+      try{ localStorage.setItem(chaveCache, JSON.stringify({ t: Date.now(), info })); }catch(e){}
+    }
+    desenharGaleria(info, key, cfg);
+  }catch(e){ falhaGaleria('erro de rede ou de código — ' + e.message); }
+}
+
+function desenharGaleria(info, key, cfg){
+  const box = document.getElementById('gmaps-gallery');
+  const track = document.getElementById('gal-track');
+  const dots = document.getElementById('gal-dots');
+  const count = document.getElementById('gal-count');
+  const credit = document.getElementById('gal-credit');
+  const n = info.fotos.length;
+
+  document.getElementById('gal-nome').textContent = info.nome || cfg.nome_site || '';
+  if(info.uri) document.getElementById('gal-link').href = info.uri;
+
+  track.innerHTML = '';
+  dots.innerHTML = '';
+  info.fotos.forEach((f, i) => {
+    const img = document.createElement('img');
+    img.src = 'https://places.googleapis.com/v1/' + f.name + '/media?maxWidthPx=900&key=' + encodeURIComponent(key);
+    img.alt = info.nome || '';
+    img.loading = i < 2 ? 'eager' : 'lazy';
+    img.draggable = false;
+    track.appendChild(img);
+    const d = document.createElement('span');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    dots.appendChild(d);
+  });
+
+  function atual(){ return Math.round(track.scrollLeft / track.clientWidth) || 0; }
+  function atualizar(){
+    const i = Math.min(atual(), n - 1);
+    count.textContent = (i + 1) + '/' + n;
+    [...dots.children].forEach((d, k) => d.classList.toggle('active', k === i));
+    const a = info.fotos[i].autor;
+    credit.innerHTML = '';
+    if(a && a.n){
+      credit.append('📸 ' + t('galBy') + ' ');
+      const l = document.createElement(a.u ? 'a' : 'span');
+      if(a.u){ l.href = a.u; l.target = '_blank'; l.rel = 'noopener'; }
+      l.textContent = a.n;
+      credit.appendChild(l);
+    }
+  }
+  let ticking = false;
+  track.addEventListener('scroll', () => {
+    if(ticking) return; ticking = true;
+    requestAnimationFrame(() => { atualizar(); ticking = false; });
+  });
+  atualizar();
+  box.style.display = '';
+
+  // Passa sozinho; pausa quando a pessoa mexe ou quando não está visível
+  if(n < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let pausadoAte = 0, visivel = false;
+  new IntersectionObserver(es => { visivel = es[0].isIntersecting; }, { threshold: 0.4 }).observe(track);
+  ['pointerdown','touchstart','wheel'].forEach(ev => track.addEventListener(ev, () => { pausadoAte = Date.now() + 7000; }, { passive: true }));
+  setInterval(() => {
+    if(!visivel || document.hidden || Date.now() < pausadoAte) return;
+    const prox = (atual() + 1) % n;
+    track.scrollTo({ left: prox * track.clientWidth, behavior: 'smooth' });
+  }, 3500);
+}
+</script>
+</body>
+</html>
